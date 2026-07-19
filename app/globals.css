@@ -87,3 +87,21 @@ body {
   color: var(--color-text-primary);
   font-family: var(--font-sans);
 }
+
+.landing-glow {
+  background:
+    radial-gradient(circle at 50% 52%, var(--color-accent-light), transparent 31%),
+    radial-gradient(circle at 12% 20%, var(--color-surface), transparent 33%),
+    radial-gradient(circle at 89% 20%, var(--color-info-light), transparent 32%),
+    var(--color-surface);
+}
+
+.landing-divider {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--color-surface-secondary) 0,
+    var(--color-surface-secondary) 1px,
+    var(--color-surface) 1px,
+    var(--color-surface) 4px
+  );
+}
