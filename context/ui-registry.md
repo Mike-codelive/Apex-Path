@@ -55,3 +55,39 @@ Last updated: 2026-07-18
 | Accent usage | CTA uses `text-accent-foreground`; links use `hover:text-accent` |
 
 **Pattern notes:** Site chrome is full-width white with a 64px header, logo at left, minimal centered desktop navigation, and a dark primary CTA.
+
+### OAuth Login Form
+
+File: `components/auth/LoginForm.tsx`
+Last updated: 2026-07-20
+
+| Property | Class |
+| --- | --- |
+| Background | `bg-surface`, `bg-surface-secondary` on button hover, `bg-error/10` for recoverable errors |
+| Border | `border border-border` |
+| Border radius | `rounded-xl` for the login card, `rounded-md` for provider buttons and error state |
+| Text — primary | `text-text-primary` heading and buttons; `text-text-secondary` body; `text-text-muted` legal copy |
+| Spacing | `p-8`, `space-y-3`, `mt-8`, `px-4 py-3` |
+| Hover state | `hover:bg-surface-secondary`, `focus:ring-2 focus:ring-accent` |
+| Shadow | `shadow-sm` |
+| Accent usage | `text-accent`, `focus:ring-accent`, `bg-error/10 text-error` for recoverable errors |
+
+**Pattern notes:** Authentication is presented as a compact, centered white surface. Provider buttons use the existing secondary-button treatment, full width for clear touch targets, with a visible focus ring and friendly inline errors instead of raw provider messages.
+
+### Authenticated Dashboard Placeholder
+
+File: `app/dashboard/page.tsx`
+Last updated: 2026-07-20
+
+| Property | Class |
+| --- | --- |
+| Background | `bg-background`, `bg-surface` |
+| Border | `border border-border` |
+| Border radius | `rounded-xl` |
+| Text — primary | `text-text-primary`, `text-text-secondary` |
+| Spacing | `p-8`, `mt-3`, `px-6 py-12` |
+| Hover state | none |
+| Shadow | `shadow-sm` |
+| Accent usage | `text-accent` |
+
+**Pattern notes:** This is a temporary, protected route destination for the completed OAuth flow. It uses the same centered auth-surface pattern and must be replaced by the full dashboard UI in Phase 5.

@@ -8,7 +8,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 **Phase:** Phase 1 — Foundation
 **Last completed:** 01 Homepage
-**Next:** 02 Auth
+**Next:** 02 Auth — configure allowed callback URLs in InsForge
 
 ---
 
@@ -17,7 +17,7 @@ Update this file after every completed feature. Any AI agent reading this should
 ### Phase 1 — Foundation
 
 - [x] 01 Homepage
-- [ ] 02 Auth
+- [ ] 02 Auth — implementation complete; backend callback URLs pending
 - [ ] 03 PostHog Initialization
 - [ ] 04 Database Schema
 
@@ -52,8 +52,13 @@ Update this file after every completed feature. Any AI agent reading this should
 
 _Add decisions here as they are made during implementation._
 
+- Auth uses the current `@insforge/sdk` SSR helpers. The previously documented `@insforge/ssr` package is unavailable on npm.
+- OAuth uses a server-owned PKCE verifier cookie and `/callback` route handler, which exchanges the InsForge code into secure session cookies before redirecting to `/dashboard`.
+- Local InsForge public configuration is stored in ignored `.env.local`; `.env.example` documents the required variable names without credentials.
+
 ---
 
 ## Notes
 
 - Homepage uses the supplied `public/` assets and is responsive. Source lint completed cleanly; production build is blocked in this environment because `next/font/google` cannot fetch Inter from Google Fonts.
+- Auth requires Google and GitHub to be configured in InsForge and each deployment origin's `/callback` URL added to InsForge allowed redirect URLs. `NEXT_PUBLIC_APP_URL` is recommended for a stable callback origin.
