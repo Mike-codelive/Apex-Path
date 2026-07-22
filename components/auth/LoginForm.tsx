@@ -2,7 +2,6 @@
 
 import { startOAuth } from "@/actions/auth";
 import { useState, useTransition } from "react";
-import posthog from "posthog-js";
 
 type LoginFormProps = {
   initialError?: string;
@@ -23,8 +22,6 @@ export function LoginForm({ initialError }: LoginFormProps): React.ReactNode {
   function handleSignIn(provider: OAuthProvider): void {
     setError(undefined);
     setPendingProvider(provider);
-
-    posthog.capture("oauth_signin_initiated", { provider });
 
     startTransition(async (): Promise<void> => {
       const result = await startOAuth(provider);

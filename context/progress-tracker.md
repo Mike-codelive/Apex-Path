@@ -6,9 +6,9 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ## Current Status
 
-**Phase:** Phase 1 — Foundation
-**Last completed:** 01 Homepage
-**Next:** 02 Auth — configure allowed callback URLs in InsForge
+**Phase:** Phase 2 — Profile Page
+**Last completed:** 04 Database Schema
+**Next:** 05 Profile Page — Full UI
 
 ---
 
@@ -17,9 +17,9 @@ Update this file after every completed feature. Any AI agent reading this should
 ### Phase 1 — Foundation
 
 - [x] 01 Homepage
-- [ ] 02 Auth — implementation complete; backend callback URLs pending
-- [ ] 03 PostHog Initialization
-- [ ] 04 Database Schema
+- [x] 02 Auth
+- [x] 03 PostHog Initialization
+- [x] 04 Database Schema
 
 ### Phase 2 — Profile Page
 
@@ -55,6 +55,10 @@ _Add decisions here as they are made during implementation._
 - Auth uses the current `@insforge/sdk` SSR helpers. The previously documented `@insforge/ssr` package is unavailable on npm.
 - OAuth uses a server-owned PKCE verifier cookie and `/callback` route handler, which exchanges the InsForge code into secure session cookies before redirecting to `/dashboard`.
 - Local InsForge public configuration is stored in ignored `.env.local`; `.env.example` documents the required variable names without credentials.
+- PostHog initializes through Next.js `instrumentation-client.ts`, with configuration owned by `lib/posthog-client.ts`. Automatic capture is disabled so only the project event taxonomy is emitted.
+- The InsForge schema is versioned in `insforge/migrations/`. Profiles are provisioned automatically from `auth.users`, and all application tables use owner-only RLS plus ownership-aware foreign keys.
+- Resume files live in the private `resumes` bucket at `{user_id}/resume.pdf`. `profiles.resume_pdf_url` stores that private object key; authenticated access is restricted to the matching user path.
+- Profile completion state is persisted in `completion_percentage` and `missing_fields`; tailored-resume fields remain out of scope.
 
 ---
 
@@ -62,3 +66,5 @@ _Add decisions here as they are made during implementation._
 
 - Homepage uses the supplied `public/` assets and is responsive. Source lint completed cleanly; production build is blocked in this environment because `next/font/google` cannot fetch Inter from Google Fonts.
 - Auth requires Google and GitHub to be configured in InsForge and each deployment origin's `/callback` URL added to InsForge allowed redirect URLs. `NEXT_PUBLIC_APP_URL` is recommended for a stable callback origin.
+- PostHog user identification runs on authenticated dashboard loads. `resetPostHog()` is ready for the logout flow when logout UI is added.
+- Feature 04 live verification confirmed four application tables, 16 application RLS policies, four resume object policies, a private bucket, and automatic profile backfill for the existing auth account. InsForge's SQL endpoint blocks session impersonation, so cross-user runtime denial must be included in authenticated integration testing.

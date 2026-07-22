@@ -91,3 +91,12 @@ Last updated: 2026-07-20
 | Accent usage | `text-accent` |
 
 **Pattern notes:** This is a temporary, protected route destination for the completed OAuth flow. It uses the same centered auth-surface pattern and must be replaced by the full dashboard UI in Phase 5.
+
+## Non-UI Features
+
+### Database Schema
+
+Files: `insforge/migrations/20260722_001_foundation_schema.sql`, `insforge/migrations/20260722_002_resume_storage_policies.sql`
+Last updated: 2026-07-22
+
+**Pattern notes:** Feature 04 is infrastructure-only and adds no UI components or visual patterns. Existing registry conventions remain unchanged for Feature 05.
