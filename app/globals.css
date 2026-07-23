@@ -105,3 +105,15 @@ body {
     var(--color-surface) 4px
   );
 }
+
+.profile-completion-ring {
+  background: conic-gradient(
+    var(--color-error) 0 70%,
+    color-mix(in srgb, var(--color-error) 16%, transparent) 70% 100%
+  );
+  transform: rotate(20deg);
+}
+
+.profile-completion-ring > div {
+  transform: rotate(-20deg);
+}

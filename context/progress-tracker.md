@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 2 — Profile Page
-**Last completed:** 04 Database Schema
-**Next:** 05 Profile Page — Full UI
+**Last completed:** 05 Profile Page — Full UI
+**Next:** 06 Profile Save Logic
 
 ---
 
@@ -23,7 +23,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 ### Phase 2 — Profile Page
 
-- [ ] 05 Profile Page — Full UI
+- [x] 05 Profile Page — Full UI
 - [ ] 06 Profile Save Logic
 - [ ] 07 AI Profile Extraction from Resume
 - [ ] 08 Resume PDF Generation from Profile
@@ -59,6 +59,7 @@ _Add decisions here as they are made during implementation._
 - The InsForge schema is versioned in `insforge/migrations/`. Profiles are provisioned automatically from `auth.users`, and all application tables use owner-only RLS plus ownership-aware foreign keys.
 - Resume files live in the private `resumes` bucket at `{user_id}/resume.pdf`. `profiles.resume_pdf_url` stores that private object key; authenticated access is restricted to the matching user path.
 - Profile completion state is persisted in `completion_percentage` and `missing_fields`; tailored-resume fields remain out of scope.
+- The profile page follows `context/designs/profile.png` as its visual source of truth. Feature 05 controls use mock values and local-only interactions; persistence remains isolated to Feature 06.
 
 ---
 
@@ -67,4 +68,5 @@ _Add decisions here as they are made during implementation._
 - Homepage uses the supplied `public/` assets and is responsive. Source lint completed cleanly; production build is blocked in this environment because `next/font/google` cannot fetch Inter from Google Fonts.
 - Auth requires Google and GitHub to be configured in InsForge and each deployment origin's `/callback` URL added to InsForge allowed redirect URLs. `NEXT_PUBLIC_APP_URL` is recommended for a stable callback origin.
 - PostHog user identification runs on authenticated dashboard loads. `resetPostHog()` is ready for the logout flow when logout UI is added.
-- Feature 04 live verification confirmed four application tables, 16 application RLS policies, four resume object policies, a private bucket, and automatic profile backfill for the existing auth account. InsForge's SQL endpoint blocks session impersonation, so cross-user runtime denial must be included in authenticated integration testing.
+- Feature 04 live verification confirmed four application tables, 16 application RLS policies, four resume object policies, a private bucket, and automatic profile backfill for the existing auth account.
+- Feature 05 adds the protected `/profile` UI, a reusable authenticated navbar state, the completion banner, resume controls, and the full responsive profile form. Lint and TypeScript checks pass; production build remains blocked only by unavailable Google Fonts network access in this environment.

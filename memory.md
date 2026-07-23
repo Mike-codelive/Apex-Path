@@ -1,27 +1,29 @@
-# Memory — Phase 1 Foundation Complete
+# Memory — Feature 05 Profile Page Complete
 
-Last updated: 2026-07-22 03:58 CST
+Last updated: 2026-07-23 CST
 
 ## What was built
 
-Completed Phase 1 / Feature 04 and applied it to the live InsForge backend. Added `insforge/migrations/20260722_001_foundation_schema.sql` for the `profiles`, `agent_runs`, `jobs`, and `agent_logs` tables, and `insforge/migrations/20260722_002_resume_storage_policies.sql` for private, user-path-scoped resume access. Updated `context/architecture.md`, `context/progress-tracker.md`, and `context/ui-registry.md`. Features 01-04 are marked complete.
+Completed Feature 05 Profile Page — Full UI. Added `app/profile/page.tsx` and the `CompletionBanner`, `ResumeSection`, and `ProfileForm` components under `components/profile/`. Extended `components/layout/Navbar.tsx` with an authenticated variant, route icons, and an active Profile state. Added the token-based completion ring to `app/globals.css`. The page includes the attention banner, local PDF selection/drop behavior, resume-generation control, and the complete responsive mock-data profile form.
+
+Updated `context/ui-registry.md` with profile and authenticated-navigation patterns. Updated `context/progress-tracker.md` to mark Feature 05 complete and Feature 06 next.
 
 ## Decisions made
 
-Profiles are provisioned automatically from `auth.users`. Application tables use owner-only RLS and ownership-aware foreign keys. Resume files live in the private `resumes` bucket at `{user_id}/resume.pdf`, with the private object key stored in `profiles.resume_pdf_url`. Profile completion state is persisted in `completion_percentage` and `missing_fields`. Tailored-resume fields remain out of scope.
+`context/designs/profile.png` is the visual source of truth for the Profile page. Feature 05 contains mock values and local-only interactions; database persistence, real resume upload, and resume generation remain outside this feature. The shared navbar now supports both its existing marketing presentation and an authenticated presentation without duplicating site chrome.
 
 ## Problems solved
 
-InsForge's SQL endpoint manages transactions, so explicit transaction statements were removed from migrations. The auth trigger is created only when absent because InsForge permits initial creation but does not permit dropping the internally owned auth-table trigger. Both migrations now replay successfully.
+The existing navbar was marketing-oriented and did not match the authenticated profile reference. Its new optional authenticated and active-route props preserve the homepage behavior while providing the required application navigation. The protected `/profile` route correctly redirects unauthenticated requests to `/login`.
 
 ## Current state
 
-The live backend has four application tables, a private `resumes` bucket, automatic profile provisioning and backfill, 19 validation constraints, 7 foreign keys, 14 indexes, 16 application RLS policies, and 4 resume-storage policies. Lint and TypeScript checks pass. Existing unrelated working-tree changes from Features 02-03 remain untouched.
+Features 01–05 are complete. ESLint, TypeScript, and whitespace checks pass. No hardcoded component colors or raw Tailwind color utilities were introduced. Production build compilation remains blocked in this environment only because `next/font/google` cannot reach Google to download Inter. The prior cross-user RLS integration-test handoff question was closed and is no longer tracked as an open item.
 
 ## Next session starts with
 
-Run `/remember restore`, confirm this handoff, then run `/architect` for Feature 05 Profile Page — Full UI. Build the page with mock data only, following the profile design and existing UI registry; save logic belongs to Feature 06.
+Run `/remember restore`, confirm this handoff, then run `/architect` for Feature 06 Profile Save Logic. Wire the existing profile form to InsForge without changing its approved visual design. Fetch the latest InsForge TypeScript database and storage documentation before editing integration code.
 
 ## Open questions
 
-InsForge blocks SQL session impersonation, so owner and cross-user denial behavior still needs an authenticated integration test when a second test account is available.
+None.

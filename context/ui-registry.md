@@ -100,3 +100,41 @@ Files: `insforge/migrations/20260722_001_foundation_schema.sql`, `insforge/migra
 Last updated: 2026-07-22
 
 **Pattern notes:** Feature 04 is infrastructure-only and adds no UI components or visual patterns. Existing registry conventions remain unchanged for Feature 05.
+
+### Profile Page
+
+Files: `components/profile/CompletionBanner.tsx`, `components/profile/ResumeSection.tsx`, `components/profile/ProfileForm.tsx`, `app/profile/page.tsx`
+Last updated: 2026-07-23
+
+| Property | Class |
+| --- | --- |
+| Background | `bg-background`, `bg-surface`, `bg-surface-secondary` |
+| Border | `border border-border`, `border-dashed border-border`, `border-error/20` |
+| Border radius | `rounded-xl` for section cards, `rounded-lg` for inset panels, `rounded-md` for controls |
+| Text — primary | `text-text-primary`, `text-xl font-semibold` for card headings, `text-base font-semibold` for form sections |
+| Text — secondary | `text-text-secondary`, `text-sm`; uppercase labels use `text-xs font-semibold tracking-wide text-text-dark` |
+| Spacing | `p-6 lg:p-8` for cards, `space-y-10` between form sections, `gap-x-5 gap-y-6` for field grids |
+| Hover state | `hover:bg-surface-secondary`, `hover:bg-accent-dark`, `focus:ring-1 focus:ring-accent` |
+| Shadow | `shadow-sm` |
+| Accent usage | `bg-accent text-accent-foreground`, `text-accent`, `accent-accent`; attention state uses `bg-error/10 text-error` |
+
+**Pattern notes:** Profile forms use two-column desktop grids that collapse to one column, token-only white cards, 44px controls, uppercase compact labels, and full-width primary submit actions. Inset work-history and upload panels use the secondary surface without introducing another card radius level. Interactive mock controls remain client-side and contain no persistence logic.
+
+### Authenticated Navigation
+
+File: `components/layout/Navbar.tsx`
+Last updated: 2026-07-23
+
+| Property | Class |
+| --- | --- |
+| Background | `bg-surface` |
+| Border | `border-b border-border` |
+| Border radius | none |
+| Text — primary | `text-sm font-medium text-text-dark` |
+| Text — secondary | none |
+| Spacing | `h-16 px-6`, `gap-3 sm:gap-8` |
+| Hover state | `hover:text-accent` |
+| Shadow | none |
+| Accent usage | Active route uses `text-accent` with `after:bg-accent` |
+
+**Pattern notes:** Authenticated navigation keeps the shared 64px site header, adds compact line icons, removes the marketing CTA, and marks the current route with accent text plus a bottom rule. Mobile retains icons while hiding labels.
