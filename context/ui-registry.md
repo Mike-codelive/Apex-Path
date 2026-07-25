@@ -116,9 +116,9 @@ Last updated: 2026-07-23
 | Spacing | `p-6 lg:p-8` for cards, `space-y-10` between form sections, `gap-x-5 gap-y-6` for field grids |
 | Hover state | `hover:bg-surface-secondary`, `hover:bg-accent-dark`, `focus:ring-1 focus:ring-accent` |
 | Shadow | `shadow-sm` |
-| Accent usage | `bg-accent text-accent-foreground`, `text-accent`, `accent-accent`; attention state uses `bg-error/10 text-error` |
+| Accent usage | `bg-accent text-accent-foreground`, `text-accent`, `accent-accent`; attention state uses `bg-error/10 text-error`, complete state uses `text-success border-success/20` |
 
-**Pattern notes:** Profile forms use two-column desktop grids that collapse to one column, token-only white cards, 44px controls, uppercase compact labels, and full-width primary submit actions. Inset work-history and upload panels use the secondary surface without introducing another card radius level. Interactive mock controls remain client-side and contain no persistence logic.
+**Pattern notes:** Profile forms use two-column desktop grids that collapse to one column, token-only white cards, 44px controls, uppercase compact labels, and full-width primary submit actions. Inset work-history and upload panels use the secondary surface without introducing another card radius level. Resume uploads use an explicit select/drop → Upload Resume flow with pending and inline result states; successful private uploads expose a compact accent-text “View uploaded resume” action backed by a short-lived server-minted URL. The completion banner uses error styling and missing-field tags below 100%; at 100% it switches to success styling, a check icon, and positive completion copy.
 
 ### Authenticated Navigation
 
@@ -138,3 +138,22 @@ Last updated: 2026-07-23
 | Accent usage | Active route uses `text-accent` with `after:bg-accent` |
 
 **Pattern notes:** Authenticated navigation keeps the shared 64px site header, adds compact line icons, removes the marketing CTA, and marks the current route with accent text plus a bottom rule. Mobile retains icons while hiding labels.
+
+### Profile Load Error
+
+File: `components/profile/ProfileLoadError.tsx`
+Last updated: 2026-07-25
+
+| Property | Class |
+| --- | --- |
+| Background | `bg-surface`, `bg-error/10` for the icon surface |
+| Border | `border border-error/20` |
+| Border radius | `rounded-xl` card, `rounded-full` icon, `rounded-md` action |
+| Text — primary | `text-xl font-semibold text-text-primary` |
+| Text — secondary | `text-sm leading-6 text-text-secondary` |
+| Spacing | `p-8`, `mt-4`, `mt-2`, `mt-6` |
+| Hover state | `hover:bg-accent-dark`, `focus:ring-2 focus:ring-accent` |
+| Shadow | `shadow-sm` |
+| Accent usage | `bg-error/10 text-error` for failure context; `bg-accent text-accent-foreground` for retry |
+
+**Pattern notes:** A failed protected-page data load must replace the editable UI rather than showing empty fallback fields. The state reassures users that saved data was not changed and offers one clear retry action.

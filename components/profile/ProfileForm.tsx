@@ -1,6 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
+
+import type {
+  ProfileActionState,
+  ProfileFormValues,
+  WorkExperience,
+} from "@/types/profile";
 
 const inputClass =
   "h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-text-primary shadow-sm outline-none placeholder:text-text-muted focus:border-accent focus:ring-1 focus:ring-accent disabled:bg-surface-secondary disabled:text-text-secondary";
@@ -8,32 +15,30 @@ const labelClass =
   "mb-2 block text-xs font-semibold uppercase tracking-wide text-text-dark";
 const sectionClass = "border-t border-border pt-10";
 
-type Role = {
+type Role = WorkExperience & {
   id: number;
-  company: string;
-  title: string;
-  startDate: string;
-  endDate: string;
-  current: boolean;
-  responsibilities: string;
 };
 
-const initialRole: Role = {
-  id: 1,
-  company: "Vercel",
-  title: "Frontend Engineer",
-  startDate: "2022-01",
-  endDate: "",
-  current: true,
-  responsibilities: "Built Next.js features and optimized web vitals. Led a team of 3 developers.",
+type ProfileFormProps = {
+  initialValues: ProfileFormValues;
+  actionState: ProfileActionState;
 };
 
-export function ProfileForm(): React.ReactNode {
-  const [skills, setSkills] = useState<string[]>(["React", "TypeScript", "Next.js", "Tailwind CSS"]);
+export function ProfileForm({
+  initialValues,
+  actionState,
+}: ProfileFormProps): React.ReactNode {
+  const { pending } = useFormStatus();
+  const [skills, setSkills] = useState<string[]>(initialValues.skills);
   const [skillDraft, setSkillDraft] = useState<string>("");
-  const [industries, setIndustries] = useState<string[]>([]);
+  const [industries, setIndustries] = useState<string[]>(initialValues.industries);
   const [industryDraft, setIndustryDraft] = useState<string>("");
-  const [roles, setRoles] = useState<Role[]>([initialRole]);
+  const [roles, setRoles] = useState<Role[]>(
+    initialValues.workExperience.map((role, index) => ({
+      ...role,
+      id: index + 1,
+    })),
+  );
 
   function addTag(
     value: string,
@@ -79,41 +84,57 @@ export function ProfileForm(): React.ReactNode {
         </p>
       </div>
 
-      <form className="space-y-10 pt-10" onSubmit={(event) => event.preventDefault()}>
+      <div className="space-y-10 pt-10">
+        <input type="hidden" name="skills" value={JSON.stringify(skills)} />
+        <input type="hidden" name="industries" value={JSON.stringify(industries)} />
+        <input
+          type="hidden"
+          name="workExperience"
+          value={JSON.stringify(
+            roles.map(({ company, title, startDate, endDate, current, responsibilities }) => ({
+              company,
+              title,
+              startDate,
+              endDate,
+              current,
+              responsibilities,
+            })),
+          )}
+        />
         <fieldset>
           <legend className="mb-8 text-base font-semibold text-text-primary">Personal Info</legend>
           <div className="grid gap-x-5 gap-y-6 md:grid-cols-2">
             <label>
               <span className={labelClass}>Full Name</span>
-              <input className={inputClass} defaultValue="Faizan Ali" />
+              <input name="fullName" className={inputClass} defaultValue={initialValues.fullName} />
             </label>
             <label>
               <span className={labelClass}>Email</span>
-              <input className={inputClass} type="email" defaultValue="faizan@jsmastery.pro" disabled />
+              <input className={inputClass} type="email" value={initialValues.email} disabled />
             </label>
             <label>
               <span className={labelClass}>Phone Number</span>
-              <input className={inputClass} type="tel" placeholder="+1 (555) 000-0000" />
+              <input name="phone" className={inputClass} type="tel" defaultValue={initialValues.phone} placeholder="+1 (555) 000-0000" />
             </label>
             <label>
               <span className={labelClass}>Location</span>
-              <input className={inputClass} placeholder="City, Country" />
+              <input name="location" className={inputClass} defaultValue={initialValues.location} placeholder="City, Country" />
             </label>
             <label>
               <span className={labelClass}>LinkedIn URL</span>
-              <input className={inputClass} type="url" defaultValue="https://linkedin.com/in/faizan" />
+              <input name="linkedinUrl" className={inputClass} type="url" defaultValue={initialValues.linkedinUrl} placeholder="https://linkedin.com/in/your-name" />
             </label>
             <label>
               <span className={labelClass}>Portfolio / GitHub</span>
-              <input className={inputClass} type="url" defaultValue="https://github.com/jsmastery" />
+              <input name="portfolioUrl" className={inputClass} type="url" defaultValue={initialValues.portfolioUrl} placeholder="https://github.com/your-name" />
             </label>
             <label>
               <span className={labelClass}>Work Authorization</span>
-              <select className={inputClass} defaultValue="citizen">
+              <select name="workAuthorization" className={inputClass} defaultValue={initialValues.workAuthorization}>
+                <option value="">Select authorization</option>
                 <option value="citizen">Citizen</option>
-                <option value="permanent-resident">Permanent Resident</option>
-                <option value="visa">Work Visa</option>
-                <option value="sponsorship">Requires Sponsorship</option>
+                <option value="permanent_resident">Permanent Resident</option>
+                <option value="visa_required">Requires Sponsorship</option>
               </select>
             </label>
           </div>
@@ -124,12 +145,12 @@ export function ProfileForm(): React.ReactNode {
           <div className="grid gap-x-5 gap-y-6 md:grid-cols-2">
             <label className="md:col-span-2">
               <span className={labelClass}>Current/Recent Job Title</span>
-              <input className={inputClass} defaultValue="Frontend Engineer" />
+              <input name="currentTitle" className={inputClass} defaultValue={initialValues.currentTitle} />
             </label>
             <label>
               <span className={labelClass}>Experience Level</span>
-              <select className={inputClass} defaultValue="junior">
-                <option value="entry">Entry Level</option>
+              <select name="experienceLevel" className={inputClass} defaultValue={initialValues.experienceLevel}>
+                <option value="">Select experience</option>
                 <option value="junior">Junior</option>
                 <option value="mid">Mid Level</option>
                 <option value="senior">Senior</option>
@@ -138,7 +159,7 @@ export function ProfileForm(): React.ReactNode {
             </label>
             <label>
               <span className={labelClass}>Years of Experience</span>
-              <input className={inputClass} type="number" min="0" defaultValue="4" />
+              <input name="yearsExperience" className={inputClass} type="number" min="0" defaultValue={initialValues.yearsExperience} />
             </label>
             <div className="md:col-span-2">
               <label htmlFor="skill-input" className={labelClass}>Skills</label>
@@ -283,7 +304,8 @@ export function ProfileForm(): React.ReactNode {
           <div className="grid gap-x-5 gap-y-6 md:grid-cols-2">
             <label>
               <span className={labelClass}>Highest Degree</span>
-              <select className={inputClass} defaultValue="high-school">
+              <select name="educationDegree" className={inputClass} defaultValue={initialValues.education.degree}>
+                <option value="">Select degree</option>
                 <option value="high-school">High School</option>
                 <option value="associate">Associate Degree</option>
                 <option value="bachelor">Bachelor&apos;s Degree</option>
@@ -293,15 +315,15 @@ export function ProfileForm(): React.ReactNode {
             </label>
             <label>
               <span className={labelClass}>Field of Study</span>
-              <input className={inputClass} defaultValue="Computer Science" />
+              <input name="educationFieldOfStudy" className={inputClass} defaultValue={initialValues.education.fieldOfStudy} />
             </label>
             <label>
               <span className={labelClass}>Institution Name</span>
-              <input className={inputClass} placeholder="E.g. State University" />
+              <input name="educationInstitution" className={inputClass} defaultValue={initialValues.education.institution} placeholder="E.g. State University" />
             </label>
             <label>
               <span className={labelClass}>Graduation Year</span>
-              <input className={inputClass} inputMode="numeric" placeholder="YYYY" />
+              <input name="educationGraduationYear" className={inputClass} defaultValue={initialValues.education.graduationYear} inputMode="numeric" placeholder="YYYY" />
             </label>
           </div>
         </fieldset>
@@ -311,11 +333,12 @@ export function ProfileForm(): React.ReactNode {
           <div className="grid gap-x-5 gap-y-6 md:grid-cols-2">
             <label className="md:col-span-2">
               <span className={labelClass}>Job Titles Seeking</span>
-              <input className={inputClass} defaultValue="Frontend Engineer, React Developer" />
+              <input name="jobTitlesSeeking" className={inputClass} defaultValue={initialValues.jobTitlesSeeking} />
             </label>
             <label>
               <span className={labelClass}>Remote Preference</span>
-              <select className={inputClass} defaultValue="any">
+              <select name="remotePreference" className={inputClass} defaultValue={initialValues.remotePreference}>
+                <option value="">Select preference</option>
                 <option value="any">Any</option>
                 <option value="remote">Remote</option>
                 <option value="hybrid">Hybrid</option>
@@ -324,24 +347,37 @@ export function ProfileForm(): React.ReactNode {
             </label>
             <label>
               <span className={labelClass}>Salary Expectation (Optional)</span>
-              <input className={inputClass} placeholder="E.g. $120k+" />
+              <input name="salaryExpectation" className={inputClass} defaultValue={initialValues.salaryExpectation} placeholder="E.g. $120k+" />
             </label>
             <label className="md:col-span-2">
               <span className={labelClass}>Preferred Locations (Optional)</span>
-              <input className={inputClass} placeholder="E.g. New York, London" />
+              <input name="preferredLocations" className={inputClass} defaultValue={initialValues.preferredLocations} placeholder="E.g. New York, London" />
             </label>
           </div>
         </fieldset>
 
         <div className="border-t border-border pt-6">
+          {actionState.message ? (
+            <p
+              role="status"
+              className={`mb-4 rounded-md px-4 py-3 text-sm font-medium ${
+                actionState.success
+                  ? "bg-success-lightest text-success-foreground"
+                  : "bg-error/10 text-error"
+              }`}
+            >
+              {actionState.message}
+            </p>
+          ) : null}
           <button
             type="submit"
-            className="w-full rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground shadow-sm transition-colors hover:bg-accent-dark focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-none"
+            disabled={pending}
+            className="w-full rounded-md bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground shadow-sm transition-colors hover:bg-accent-dark focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Save Profile
+            {pending ? "Saving…" : "Save Profile"}
           </button>
         </div>
-      </form>
+      </div>
     </section>
   );
 }
