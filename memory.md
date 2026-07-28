@@ -1,38 +1,32 @@
-# Memory — Feature 06 Profile Save Logic Complete
+# Memory — Feature 07 AI Profile Extraction Complete
 
-Last updated: 2026-07-25 CST
+Last updated: 2026-07-27 CST
 
 ## What was built
 
-Completed Feature 06. Added `actions/profile.ts`, `lib/profile.ts`, `types/profile.ts`, `components/profile/ProfileEditor.tsx`, and `components/profile/ProfileLoadError.tsx`. Updated `/profile` and its existing components to load and save the authenticated user’s profile, persist completion metadata, and present pending, success, failure, and safe load-error states.
+Completed Feature 07. Added `agent/profile-extractor.ts` and `app/api/resume/extract/route.ts`; updated the profile types and editor, form, and resume components. The authenticated flow downloads the user's stored private resume, extracts PDF text, uses GPT-4o Structured Outputs with Zod validation, and atomically replaces supported fields in the browser draft. Email and job-preference fields remain unchanged, and Save Profile remains the only persistence step.
 
-Resume upload now uses a separate explicit select/drop → Upload Resume flow. It validates PDF type and size, writes the returned private object key to the profile, removes the previous referenced object after replacement, rolls back a newly created object when the profile update fails, and provides a short-lived signed View uploaded resume link.
-
-Updated `context/ui-registry.md` with completion, private-file action, upload-state, and profile-load-error patterns. Updated `context/progress-tracker.md` to mark Feature 06 complete and Feature 07 next.
+Added `openai`, `pdf-parse`, and `zod`. Updated `context/ui-registry.md` with the extraction interaction pattern and `context/progress-tracker.md` to mark Feature 07 complete and Feature 08 next.
 
 ## Decisions made
 
-Profile completion uses ten equally weighted categories: full name, phone, location, current title, experience level, skills, work experience, education, job titles seeking, and remote preference. Each contributes 10%; only 100% sets `is_complete`.
+Resume extraction is owned by an authenticated API route; agent code performs parsing and model extraction but never writes to the database. Extracted values are evidence-based, normalized, limited to the supported profile fields, and require explicit user review and save.
 
-Profile saving and resume upload use separate authenticated, owner-scoped Server Actions. Resume extraction and generated-resume behavior remain isolated to Features 07 and 08. Existing `cover_letter_tone` is preserved without changing the approved UI.
+`pdf-parse` is listed in `serverExternalPackages` so Next uses native Node resolution for its packaged PDF.js worker. Known invalid, malformed, or password-protected PDFs are reported as upload problems; unexpected parser infrastructure failures use the general extraction failure path.
 
 ## Problems solved
 
-The original resume control only showed a filename, deferred upload to the distant profile Save button, and failed to attach dropped files. `/recover` identified this as a targeted failure; the flow was replaced with an immediate, independently validated upload action.
+Next/Turbopack originally bundled PDF.js into a server chunk without emitting `pdf.worker.mjs`, causing every extraction attempt to fail with a fake-worker module error. Externalizing `pdf-parse` fixed worker resolution in both development and production server output.
 
-The completion banner no longer says “Profile needs attention” at 100%. It switches to a green completed state. A failed initial profile query no longer renders empty editable fields, preventing accidental data overwrite.
-
-Server-side validation now rejects malformed numbers, URLs, graduation years, oversized values and tag sets, and incomplete work or education entries. Resume replacement cleans up stale referenced objects and failed new uploads where safe.
+The parser boundary was corrected so worker and runtime failures are no longer incorrectly returned as HTTP 422 invalid-PDF errors.
 
 ## Current state
 
-Features 01–06 are complete. The developer verified authenticated profile saving and resume behavior against the current backend. ESLint, strict TypeScript, completion and validation checks, whitespace checks, and design-token checks pass.
-
-Production build compilation remains blocked in this environment only because `next/font/google` cannot download Inter.
+Features 01–07 are complete. The developer verified authenticated end-to-end extraction against the stored resume after the worker fix. Strict TypeScript, ESLint, whitespace checks, production build, emitted server dependency inspection, and invalid-PDF classification pass.
 
 ## Next session starts with
 
-Run `/remember restore`, confirm this handoff, then run `/architect` for Feature 07 AI Profile Extraction from Resume. Fetch the latest InsForge storage and OpenAI documentation before editing integration code. Build extraction on top of the completed explicit resume-upload flow without changing Feature 06 persistence behavior.
+Run `/remember restore`, confirm this handoff, then run `/architect feature 08`. Plan the authenticated `/api/resume/generate` flow that reads profile data, generates polished resume content with GPT-4o, renders a single-page PDF using `@react-pdf/renderer`, uploads it to the private resume object, and updates the profile reference.
 
 ## Open questions
 

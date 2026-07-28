@@ -52,6 +52,47 @@ export type ResumeActionState = {
   resumeDownloadUrl?: string;
 };
 
+export type ProfileExtractedValues = Pick<
+  ProfileFormValues,
+  | "fullName"
+  | "phone"
+  | "location"
+  | "linkedinUrl"
+  | "portfolioUrl"
+  | "currentTitle"
+  | "experienceLevel"
+  | "yearsExperience"
+  | "skills"
+  | "industries"
+  | "workExperience"
+  | "education"
+>;
+
+export type ProfileExtractionErrorCode =
+  | "invalid_pdf"
+  | "unreadable_pdf"
+  | "extraction_failed";
+
+export type ProfileExtractionResult =
+  | {
+      success: true;
+      data: ProfileExtractedValues;
+    }
+  | {
+      success: false;
+      code: ProfileExtractionErrorCode;
+    };
+
+export type ProfileExtractionApiResponse =
+  | {
+      success: true;
+      data: ProfileExtractedValues;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+
 export type ProfileCompletionInput = Pick<
   ProfileFormValues,
   | "fullName"

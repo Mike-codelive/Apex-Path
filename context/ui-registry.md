@@ -157,3 +157,22 @@ Last updated: 2026-07-25
 | Accent usage | `bg-error/10 text-error` for failure context; `bg-accent text-accent-foreground` for retry |
 
 **Pattern notes:** A failed protected-page data load must replace the editable UI rather than showing empty fallback fields. The state reassures users that saved data was not changed and offers one clear retry action.
+
+### Resume Profile Extraction
+
+Files: `components/profile/ResumeSection.tsx`, `components/profile/ProfileEditor.tsx`, `components/profile/ProfileForm.tsx`
+Last updated: 2026-07-27
+
+| Property | Class |
+| --- | --- |
+| Background | `bg-surface`, `bg-surface-secondary`, `bg-success-lightest`, `bg-error/10` |
+| Border | `border border-border`, `border-dashed border-border` |
+| Border radius | `rounded-xl` for the resume card, `rounded-lg` for the upload panel, `rounded-md` for actions and status |
+| Text — primary | `text-sm font-semibold text-text-dark` for the extraction action |
+| Text — secondary | `text-sm text-text-secondary`; status uses `text-success-foreground` or `text-error` |
+| Spacing | `mt-3`, `px-5 py-2.5` for the action; `px-3 py-2` for inline status |
+| Hover state | `hover:bg-surface-secondary`, `focus:ring-2 focus:ring-accent`, `disabled:opacity-60` |
+| Shadow | `shadow-sm` |
+| Accent usage | `focus:ring-accent`; extraction success uses success tokens and failure uses error tokens |
+
+**Pattern notes:** AI-assisted profile extraction is a secondary action shown only after a private resume exists. It uses an explicit `Extracting…` pending label, disables duplicate actions while work is in flight, and reports success or failure inline without replacing the editable profile surface. Successful extraction updates the browser draft only and always reminds the user to review before saving.

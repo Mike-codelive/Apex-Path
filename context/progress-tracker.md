@@ -7,8 +7,8 @@ Update this file after every completed feature. Any AI agent reading this should
 ## Current Status
 
 **Phase:** Phase 2 — Profile Page
-**Last completed:** 06 Profile Save Logic
-**Next:** 07 AI Profile Extraction from Resume
+**Last completed:** 07 AI Profile Extraction from Resume
+**Next:** 08 Resume PDF Generation from Profile
 
 ---
 
@@ -25,7 +25,7 @@ Update this file after every completed feature. Any AI agent reading this should
 
 - [x] 05 Profile Page — Full UI
 - [x] 06 Profile Save Logic
-- [ ] 07 AI Profile Extraction from Resume
+- [x] 07 AI Profile Extraction from Resume
 - [ ] 08 Resume PDF Generation from Profile
 
 ### Phase 3 — Find Jobs Page
@@ -61,6 +61,7 @@ _Add decisions here as they are made during implementation._
 - Profile completion state is persisted in `completion_percentage` and `missing_fields`; tailored-resume fields remain out of scope.
 - The profile page follows `context/designs/profile.png` as its visual source of truth. Feature 05 controls use mock values and local-only interactions; persistence remains isolated to Feature 06.
 - Profile persistence uses authenticated, owner-scoped Server Actions. Completion is calculated from ten equally weighted profile categories; resume upload is an independent validated action using private storage and short-lived signed view URLs.
+- Resume extraction uses an authenticated API route to download the current private object, `pdf-parse` v2 for text extraction, and GPT-4o Structured Outputs validated through Zod. It updates only the browser draft; the existing Save Profile action remains the sole profile write.
 
 ---
 
@@ -72,3 +73,4 @@ _Add decisions here as they are made during implementation._
 - Feature 04 live verification confirmed four application tables, 16 application RLS policies, four resume object policies, a private bucket, and automatic profile backfill for the existing auth account.
 - Feature 05 adds the protected `/profile` UI, a reusable authenticated navbar state, the completion banner, resume controls, and the full responsive profile form. Lint and TypeScript checks pass; production build remains blocked only by unavailable Google Fonts network access in this environment.
 - Feature 06 pre-fills and saves profile data, persists completion metadata, emits `profile_completed` only on the first completed transition, and supports select/drop PDF upload, replacement cleanup, and private resume viewing. Authenticated profile saving and resume behavior were verified working by the developer. Lint, strict TypeScript, validation checks, and whitespace checks pass.
+- Feature 07 adds evidence-first profile extraction from the stored private PDF, atomic replacement of resume-supported draft fields, preservation of preference fields and email, and inline loading/success/failure states. `pdf-parse` is externalized from Next's server bundle so its packaged PDF.js worker resolves correctly in development and production; parser infrastructure failures are no longer reported as invalid uploads. The developer verified authenticated end-to-end extraction against the stored resume after the worker fix. PDF parsing, unauthenticated route handling, lint, strict TypeScript, whitespace checks, token checks, and a network-enabled production build pass.

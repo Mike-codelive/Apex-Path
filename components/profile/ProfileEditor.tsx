@@ -1,12 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 
 import { saveProfile } from "@/actions/profile";
 import { CompletionBanner } from "@/components/profile/CompletionBanner";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { ResumeSection } from "@/components/profile/ResumeSection";
-import type { ProfileActionState, ProfileFormValues } from "@/types/profile";
+import type {
+  ProfileActionState,
+  ProfileExtractedValues,
+  ProfileFormValues,
+} from "@/types/profile";
 
 const INITIAL_ACTION_STATE: ProfileActionState = {
   success: false,
@@ -26,10 +30,18 @@ export function ProfileEditor({
     saveProfile,
     INITIAL_ACTION_STATE,
   );
+  const [draft, setDraft] = useState<ProfileFormValues>(initialValues);
   const completionPercentage =
     actionState.completionPercentage ?? initialValues.completionPercentage;
   const missingFields =
     actionState.missingFields ?? initialValues.missingFields;
+
+  function applyExtraction(values: ProfileExtractedValues): void {
+    setDraft((current) => ({
+      ...current,
+      ...values,
+    }));
+  }
 
   return (
     <div className="space-y-6">
@@ -37,9 +49,17 @@ export function ProfileEditor({
         completionPercentage={completionPercentage}
         missingFields={missingFields}
       />
-      <ResumeSection resumeDownloadUrl={resumeDownloadUrl} />
+      <ResumeSection
+        hasResume={Boolean(initialValues.resumePdfUrl)}
+        resumeDownloadUrl={resumeDownloadUrl}
+        onExtracted={applyExtraction}
+      />
       <form action={formAction}>
-        <ProfileForm initialValues={initialValues} actionState={actionState} />
+        <ProfileForm
+          values={draft}
+          actionState={actionState}
+          onValuesChange={setDraft}
+        />
       </form>
     </div>
   );
